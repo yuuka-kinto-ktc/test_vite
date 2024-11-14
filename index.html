@@ -9,5 +9,60 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <button type="button" id="stop" onclick="stopPeriodicRequests()">stop</button>
+<script>
+    const config = {
+        url: 'https://jsonplaceholder.typicode.com/todos/1',
+        intervalMinutes: 1,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };        
+
+    async function makeGetRequest() {
+        try {
+            const response = await fetch(config.url, {
+                method: 'GET',
+                headers: config.headers
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log('Data received:', data);
+
+            processData(data);
+
+        } catch (error) {
+            console.error('Error making GET request:', error);
+
+        }
+    }
+
+    function processData(data) {
+        var date = new Date().toLocaleDateString('sv-SE');
+        var time = new Date().toLocaleTimeString('ja-JS');
+        let item = document.createElement('p');
+        item.textContent = date + ' ' + time;
+        document.body.appendChild(item);
+    }
+
+    // ミリ秒に変換する
+    //const intervalMs = config.intervalMinutes * 60 * 1000;
+    const intervalMs = config.intervalMinutes * 1000;
+
+    window.onload = function() {
+        makeGetRequest();
+    };
+
+    const intervalId = setInterval(makeGetRequest, intervalMs);
+
+    function stopPeriodicRequests() {
+        clearInterval(intervalId);
+    }
+
+</script>
   </body>
 </html>
